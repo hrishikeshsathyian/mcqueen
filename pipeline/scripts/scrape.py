@@ -5,7 +5,7 @@ from db.jobs import update_seen_jobs, get_seen_global_ids
 
 slug = "placeholder" # single company scrapers have redundant slug fields s
 
-def scrape() -> None: 
+def scrape() -> list[Job]: 
     try:
         seen_global_ids: set[str] = get_seen_global_ids()
         print("Fetching jobs from tiktok...")
@@ -23,9 +23,12 @@ def scrape() -> None:
                 filtered_jobs.append(j)
         print(f"Found {len(filtered_jobs)} unique jobs")
         if len(filtered_jobs) == 0:
-            return
+            return []
         update_seen_jobs(filtered_jobs)
+        return filtered_jobs
+
     except JobHiveError as exc:
         print(str(exc))
+        return []
 
 
