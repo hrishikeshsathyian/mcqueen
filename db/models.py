@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from jobhive.models import Job as JobHiveJob
 
@@ -17,7 +18,7 @@ class SeenJobCreate(BaseModel):
     employment_type: Optional[str] = None
     department: Optional[str] = None
     posted_at: Optional[datetime] = None
-
+    fetched_at: datetime = datetime.now(ZoneInfo("Asia/Singapore"))
     @classmethod
     def from_job(cls, job: JobHiveJob) -> "SeenJobCreate":
         return cls(
