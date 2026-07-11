@@ -25,7 +25,8 @@ class ScraperSource:
     def _fetch_one(self, slug: str) -> list[Job]:
         try:
             return self.scraper_cls(slug).fetch()
-        except JobHiveError:
+        except JobHiveError as exc:
+            print(f"[{self.name}] {slug}: {type(exc).__name__}: {exc}")
             return []
 
     def fetch_raw(self) -> list[Job]: 

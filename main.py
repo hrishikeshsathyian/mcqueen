@@ -15,5 +15,11 @@ async def run():
     for job in filtered_jobs: 
         await bot.send_job(job=job)
 
+async def populate_db():
+    # scrape and find unique jobs
+    filtered_jobs: list[Job] = scrape()
+    # update database
+    update_seen_jobs(filtered_jobs)
+
 if __name__ == "__main__":
-    asyncio.run(run()) 
+    asyncio.run(populate_db()) 
