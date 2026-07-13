@@ -10,7 +10,7 @@ class SeenJobCreate(BaseModel):
     ats_type: str
     ats_id: str
 
-    url: str
+    apply_url: str
     company: str
     title: str
 
@@ -24,7 +24,7 @@ class SeenJobCreate(BaseModel):
         return cls(
             ats_type=job.ats_type.value,
             ats_id=job.ats_id,
-            url=str(job.url),
+            apply_url=str(job.apply_url),
             company=job.company,
             title=job.title,
             location=job.location,

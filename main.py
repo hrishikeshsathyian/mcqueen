@@ -10,7 +10,8 @@ async def run():
     # scrape and find unique jobs
     filtered_jobs: list[Job] = scrape()
     # update database
-    update_seen_jobs(filtered_jobs)
+    if len(filtered_jobs) > 0:
+        update_seen_jobs(filtered_jobs)
     # send new updates to telegram
     for job in filtered_jobs: 
         await bot.send_job(job=job)
@@ -22,4 +23,4 @@ async def populate_db():
     update_seen_jobs(filtered_jobs)
 
 if __name__ == "__main__":
-    asyncio.run(run()) 
+    asyncio.run(populate_db()) 
