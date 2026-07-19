@@ -23,4 +23,4 @@ async def populate_db():
     update_seen_jobs(filtered_jobs)
 
 if __name__ == "__main__":
-    asyncio.run(populate_db()) 
+    asyncio.run(run()) 
