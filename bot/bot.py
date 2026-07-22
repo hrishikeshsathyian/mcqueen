@@ -31,6 +31,6 @@ async def send_job(job: Job):
     text = (
         f"<b>{html.escape(job.title)}</b>\n"
         f"🏢 {html.escape(job.company)}\n"
-        f'👉 <a href="{html.escape(str(job.url))}">View Listing</a>'
+        f'👉 <a href="{html.escape(str(job.apply_url))}">View Listing</a>'
     )
     return await send_message(text)
