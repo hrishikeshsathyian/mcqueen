@@ -1,36 +1,73 @@
-from telegram import Bot
+import asyncio
+import html
+import os
+
+from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.constants import ParseMode
 from telegram.error import TelegramError, TimedOut
-import os
+
 from jobhive.models import Job
-import html
-import asyncio
+
 
 token: str = os.environ["TELEGRAM_BOT_TOKEN"]
 chat_id: str = os.environ["TELEGRAM_CHAT_ID"]
 
-bot = Bot(
-    token=token
-    )
+bot = Bot(token=token)
 
-async def send_message(text: str): 
-    try:    
+
+async def send_message(
+    text: str,
+    reply_markup: InlineKeyboardMarkup | None = None,
+):
+    try:
         return await bot.send_message(
             chat_id=chat_id,
             text=text,
             parse_mode=ParseMode.HTML,
             disable_web_page_preview=True,
+            reply_markup=reply_markup,
         )
-    except TimedOut: 
-        print(f"Telegram timeout occurred")
-        await asyncio.sleep(1.0)
-    except TelegramError as e:
-        print(f"Error occured: {e.message}") 
 
-async def send_job(job: Job):
+    except TimedOut:
+        print("Telegram timeout occurred. Retrying...")
+        await asyncio.sleep(1.0)
+
+        return await bot.send_message(
+            chat_id=chat_id,
+            text=text,
+            parse_mode=ParseMode.HTML,
+            disable_web_page_preview=True,
+            reply_markup=reply_markup,
+        )
+
+    except TelegramError as e:
+        print(f"Telegram error occurred: {e}")
+
+
+async def send_job(job: Job, use_apply_url: bool = False):
+    if use_apply_url: 
+        url = str(job.apply_url)
+    else:
+        url = str(job.url)
+        
     text = (
-        f"<b>{html.escape(job.title)}</b>\n"
-        f"🏢 {html.escape(job.company)}\n"
-        f'👉 <a href="{html.escape(str(job.apply_url))}">View Listing</a>'
+        "🚨 <b>New Internship Alert</b>\n\n"
+        f"💼 <b>{html.escape(job.title)}</b>\n"
+        f"🏢 {html.escape(job.company)}"
     )
-    return await send_message(text)
+
+    keyboard = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton(
+                    text="View Listing ↗️",
+                    url=url,
+                )
+            ]
+        ]
+    )
+
+    return await send_message(
+        text=text,
+        reply_markup=keyboard,
+    )
