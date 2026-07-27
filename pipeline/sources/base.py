@@ -54,7 +54,7 @@ class ScraperSource:
         result : list[Job] = []
         for j in jobs:
             global_id = f"{j.ats_type}:{j.ats_id}"
-            if self.is_singapore(j) and self.is_intern(j) and global_id not in seen_global_ids:
+            if self.is_singapore(j) and global_id not in seen_global_ids:
                 result.append(j)
         return result
 

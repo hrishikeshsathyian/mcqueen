@@ -1,6 +1,6 @@
 from pathlib import Path
 import pandas as pd
-from jobhive.scrapers import TikTokScraper, SmartRecruitersScraper, LeverScraper
+from jobhive.scrapers import TikTokScraper, SmartRecruitersScraper, LeverScraper, WorkdayScraper
 from .base import ScraperSource
 from .scrapers.careersgov import CareersGovScraper
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
@@ -36,4 +36,10 @@ SOURCES: list[ScraperSource] = [
         slugs=["placeholder"],
         max_workers=1,
     ),
+    ScraperSource(
+        name="workday",
+        scraper_cls=WorkdayScraper,
+        slugs=_load_slugs("workday", True),
+        max_workers=8,
+    )
 ]
