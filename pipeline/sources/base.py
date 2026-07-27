@@ -11,7 +11,7 @@ def default_is_singapore(j: Job) -> bool:
     return bool(j.location and ("singapore" in j.location.lower() or "sg" in j.location.lower()))
 
 def default_is_intern(j: Job) -> bool:
-    return bool(j.employment_type and j.employment_type == "INTERN")
+    return bool(j.employment_type and j.employment_type == "INTERN") or bool(j.title and "intern" in j.title.lower())
 
 @dataclass 
 class ScraperSource: 
@@ -54,7 +54,7 @@ class ScraperSource:
         result : list[Job] = []
         for j in jobs:
             global_id = f"{j.ats_type}:{j.ats_id}"
-            if self.is_singapore(j) and global_id not in seen_global_ids:
+            if self.is_singapore(j) and self.is_intern(j) and global_id not in seen_global_ids:
                 result.append(j)
         return result
 
