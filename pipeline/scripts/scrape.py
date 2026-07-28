@@ -1,5 +1,5 @@
 from db.jobs import get_seen_global_ids
-from jobhive.models import Job
+from ats_scrapers.models import Job
 from pipeline.sources.registry import SOURCES
 
 def scrape() -> list[Job]: 

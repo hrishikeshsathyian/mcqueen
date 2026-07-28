@@ -6,7 +6,7 @@ from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.constants import ParseMode
 from telegram.error import TelegramError, TimedOut
 
-from jobhive.models import Job
+from ats_scrapers.models import Job
 
 
 token: str = os.environ["TELEGRAM_BOT_TOKEN"]

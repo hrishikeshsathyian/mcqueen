@@ -1,6 +1,6 @@
 from .client import supabase
 from .models import SeenJobCreate
-from jobhive.models import Job as JobHiveJob
+from ats_scrapers.models import Job as JobHiveJob
 from postgrest import APIError
 from typing import cast
 

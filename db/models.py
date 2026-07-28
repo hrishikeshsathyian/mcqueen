@@ -3,12 +3,12 @@ from typing import Optional
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from jobhive.models import Job as JobHiveJob
+from ats_scrapers.models import Job as JobHiveJob
 
 
 class SeenJobCreate(BaseModel):
     ats_type: str
-    ats_id: str
+    ats_id: str | None
 
     apply_url: str | None
     url: str | None

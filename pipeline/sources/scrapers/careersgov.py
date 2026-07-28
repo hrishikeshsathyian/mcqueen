@@ -1,5 +1,5 @@
-from jobhive.scrapers import BaseScraper
-from jobhive.models import Job, ATSType
+from ats_scrapers.scrapers import BaseScraper
+from ats_scrapers.models import Job, ATSType
 from typing import Any
 import requests 
 from pydantic import HttpUrl

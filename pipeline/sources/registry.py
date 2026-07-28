@@ -1,6 +1,6 @@
 from pathlib import Path
 import pandas as pd
-from jobhive.scrapers import TikTokScraper, SmartRecruitersScraper, LeverScraper, WorkdayScraper
+from ats_scrapers.scrapers import TikTokScraper, SmartRecruitersScraper, LeverScraper, WorkdayScraper
 from .base import ScraperSource
 from .scrapers.careersgov import CareersGovScraper
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"

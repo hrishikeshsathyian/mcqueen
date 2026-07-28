@@ -4,7 +4,7 @@ from bot import bot
 from db.jobs import update_seen_jobs
 from pipeline.scripts.scrape import scrape
 import asyncio
-from jobhive.models import Job, ATSType
+from ats_scrapers.models import Job, ATSType
 import time
 
 async def run():

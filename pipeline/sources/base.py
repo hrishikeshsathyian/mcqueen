@@ -1,8 +1,8 @@
 from typing import Callable
-from jobhive.models import Job
+from ats_scrapers.models import Job
 from dataclasses import dataclass
-from jobhive.scrapers import BaseScraper
-from jobhive.exceptions import JobHiveError
+from ats_scrapers.scrapers import BaseScraper
+from ats_scrapers.exceptions import ATSScrapersError
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 JobFilter = Callable[[Job], bool]
@@ -25,7 +25,7 @@ class ScraperSource:
     def _fetch_one(self, slug: str) -> list[Job]:
         try:
             return self.scraper_cls(slug).fetch()
-        except JobHiveError as exc:
+        except ATSScrapersError as exc:
             print(f"[{self.name}] {slug}: {type(exc).__name__}: {exc}")
             return []
 
@@ -40,7 +40,7 @@ class ScraperSource:
                 slug = futures[future]
                 try:
                     result = future.result()
-                except JobHiveError as exc:
+                except ATSScrapersError as exc:
                     print(f"[{self.name}] skipped {slug}: {exc}")
                     continue
                 except Exception as exc:
