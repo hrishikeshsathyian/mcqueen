@@ -20,6 +20,7 @@ class SeenJobCreate(BaseModel):
     department: Optional[str] = None
     posted_at: Optional[datetime] = None
     fetched_at: datetime = datetime.now(ZoneInfo("Asia/Singapore"))
+
     @classmethod
     def from_job(cls, job: JobHiveJob) -> "SeenJobCreate":
         return cls(
@@ -34,6 +35,7 @@ class SeenJobCreate(BaseModel):
             department=job.department,
             posted_at=job.posted_at,
         )
+
 
 class SeenJob(SeenJobCreate):
     global_id: str

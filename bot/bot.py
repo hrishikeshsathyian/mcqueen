@@ -8,7 +8,6 @@ from telegram.error import TelegramError, TimedOut
 
 from ats_scrapers.models import Job
 
-
 token: str = os.environ["TELEGRAM_BOT_TOKEN"]
 chat_id: str = os.environ["TELEGRAM_CHAT_ID"]
 
@@ -45,11 +44,11 @@ async def send_message(
 
 
 async def send_job(job: Job, use_apply_url: bool = False):
-    if use_apply_url: 
+    if use_apply_url:
         url = str(job.apply_url)
     else:
         url = str(job.url)
-        
+
     text = (
         "🚨 <b>New Internship Alert</b>\n\n"
         f"💼 <b>{html.escape(job.title)}</b>\n"

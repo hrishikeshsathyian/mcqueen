@@ -4,6 +4,7 @@ from ats_scrapers.models import Job as JobHiveJob
 from postgrest import APIError
 from typing import cast
 
+
 def update_seen_jobs(jobs: list[JobHiveJob]) -> None:
     rows = [SeenJobCreate.from_job(job).model_dump(mode="json") for job in jobs]
     try:
@@ -16,14 +17,9 @@ def update_seen_jobs(jobs: list[JobHiveJob]) -> None:
 
 
 def get_seen_global_ids() -> set[str]:
-    response = (
-        supabase
-        .table("seen_jobs")
-        .select("global_id")
-        .execute()
-    )
+    response = supabase.table("seen_jobs").select("global_id").execute()
     rows = cast(list[dict[str, str]], response.data)
     ids: set[str] = set()
-    for row in rows: 
+    for row in rows:
         ids.add(row["global_id"])
     return ids

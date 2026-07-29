@@ -1,30 +1,35 @@
 from ats_scrapers.scrapers import BaseScraper
 from ats_scrapers.models import Job, ATSType
 from typing import Any
-import requests 
+import requests
 from pydantic import HttpUrl
 
-CAREERS_GOV_URL="https://raw.githubusercontent.com/opengovsg/careersgovsg-jobs-data/main/data/job-listings.json"
-CAREERS_GOV_INTERNSHIP_EMPLOYMENT_TYPE="Internship"
-CAREERS_GOV_INTERNSHIP_EMPLOYMENT_TYPE_CODE="0005"
-CAREERS_GOV_INDUSTRY_FIELD_CODE_OTHERS="0025"
-CAREERS_GOV_INDUSTRY_FIELD_CODE_IT="0017"
+CAREERS_GOV_URL = "https://raw.githubusercontent.com/opengovsg/careersgovsg-jobs-data/main/data/job-listings.json"
+CAREERS_GOV_INTERNSHIP_EMPLOYMENT_TYPE = "Internship"
+CAREERS_GOV_INTERNSHIP_EMPLOYMENT_TYPE_CODE = "0005"
+CAREERS_GOV_INDUSTRY_FIELD_CODE_OTHERS = "0025"
+CAREERS_GOV_INDUSTRY_FIELD_CODE_IT = "0017"
+
 
 class CareersGovScraper(BaseScraper):
-    
+
     async def afetch(self) -> list[Job]:
         fetched: list[Job] = []
         response = requests.get(CAREERS_GOV_URL)
         response.raise_for_status()
         data: list[Any] = response.json()
         filtered = [
-            posting for posting in data
+            posting
+            for posting in data
             if posting["employmentType"] == CAREERS_GOV_INTERNSHIP_EMPLOYMENT_TYPE
-                and posting["employmentTypeCode"] == CAREERS_GOV_INTERNSHIP_EMPLOYMENT_TYPE_CODE
-                and (posting["fieldCode"] == CAREERS_GOV_INDUSTRY_FIELD_CODE_IT 
-                     or posting["fieldCode"] == CAREERS_GOV_INDUSTRY_FIELD_CODE_OTHERS)
+            and posting["employmentTypeCode"]
+            == CAREERS_GOV_INTERNSHIP_EMPLOYMENT_TYPE_CODE
+            and (
+                posting["fieldCode"] == CAREERS_GOV_INDUSTRY_FIELD_CODE_IT
+                or posting["fieldCode"] == CAREERS_GOV_INDUSTRY_FIELD_CODE_OTHERS
+            )
         ]
-        for row in filtered: 
+        for row in filtered:
             res: Job = self.parse(row)
             fetched.append(res)
         return fetched
@@ -41,10 +46,10 @@ class CareersGovScraper(BaseScraper):
             commitment=None,
             description=posting["jobDescription"],
             fetched_at=None,
-            experience=None, 
+            experience=None,
             apply_url=HttpUrl(self._build_listing_url(posting)),
-            requisition_id=None
-        ) 
+            requisition_id=None,
+        )
 
     def _build_listing_url(self, posting: Any) -> str:
         platform = posting.get("platform", "").lower()
@@ -53,5 +58,7 @@ class CareersGovScraper(BaseScraper):
         if platform == "workable":
             return f"https://apply.workable.com/j/{posting_no}"
         if platform == "greenhouse":
-            return f"https://jobs.careers.gov.sg/jobs/{platform}/{job_id}?gh_jid={job_id}"
-        return f"https://jobs.careers.gov.sg/jobs/{platform}/{job_id}/{posting_no}" # for hrp 
+            return (
+                f"https://jobs.careers.gov.sg/jobs/{platform}/{job_id}?gh_jid={job_id}"
+            )
+        return f"https://jobs.careers.gov.sg/jobs/{platform}/{job_id}/{posting_no}"  # for hrp

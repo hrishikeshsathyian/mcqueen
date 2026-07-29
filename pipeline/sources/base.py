@@ -4,18 +4,25 @@ from dataclasses import dataclass
 from ats_scrapers.scrapers import BaseScraper
 from ats_scrapers.exceptions import ATSScrapersError
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import re
 
 JobFilter = Callable[[Job], bool]
 
+
 def default_is_singapore(j: Job) -> bool:
-    return bool(j.location and ("singapore" in j.location.lower() or "sg" in j.location.lower()))
+    _SINGAPORE_RE = re.compile(r"\b(singapore|sg|remote|aipac)\b", re.IGNORECASE)
+    return bool(j.location and _SINGAPORE_RE.search(j.location))
+
 
 def default_is_intern(j: Job) -> bool:
-    return bool(j.employment_type and j.employment_type == "INTERN") or bool(j.title and "intern" in j.title.lower())
+    _INTERN_RE = re.compile(r"\bintern|programme", re.IGNORECASE)
+    return bool(j.employment_type and j.employment_type == "INTERN") or bool(
+        j.title and _INTERN_RE.search(j.title)
+    )
 
-@dataclass 
-class ScraperSource: 
-    name: str 
+@dataclass
+class ScraperSource:
+    name: str
     scraper_cls: type[BaseScraper]
     slugs: list[str]
     is_singapore: JobFilter = default_is_singapore
@@ -29,8 +36,8 @@ class ScraperSource:
             print(f"[{self.name}] {slug}: {type(exc).__name__}: {exc}")
             return []
 
-    def fetch_raw(self) -> list[Job]: 
-        if len(self.slugs) == 1: 
+    def fetch_raw(self) -> list[Job]:
+        if len(self.slugs) == 1:
             return self._fetch_one(self.slugs[0])
         jobs: list[Job] = []
 
@@ -49,12 +56,15 @@ class ScraperSource:
                 jobs.extend(result)
                 print(f"[{self.name}] ({i}/{len(futures)}) {slug}")
         return jobs
-    
+
     def filter_new(self, jobs: list[Job], seen_global_ids: set[str]) -> list[Job]:
-        result : list[Job] = []
+        result: list[Job] = []
         for j in jobs:
             global_id = f"{j.ats_type}:{j.ats_id}"
-            if self.is_singapore(j) and self.is_intern(j) and global_id not in seen_global_ids:
+            if (
+                self.is_singapore(j)
+                and self.is_intern(j)
+                and global_id not in seen_global_ids
+            ):
                 result.append(j)
         return result
-
