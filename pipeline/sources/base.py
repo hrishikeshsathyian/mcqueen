@@ -4,21 +4,21 @@ from dataclasses import dataclass
 from ats_scrapers.scrapers import BaseScraper
 from ats_scrapers.exceptions import ATSScrapersError
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import re
 
 JobFilter = Callable[[Job], bool]
 
 
 def default_is_singapore(j: Job) -> bool:
-    return bool(
-        j.location and ("singapore" in j.location.lower() or "sg" in j.location.lower())
-    )
+    _SINGAPORE_RE = re.compile(r"\b(singapore|sg|remote|aipac)\b", re.IGNORECASE)
+    return bool(j.location and _SINGAPORE_RE.search(j.location))
 
 
 def default_is_intern(j: Job) -> bool:
+    _INTERN_RE = re.compile(r"\bintern|programme", re.IGNORECASE)
     return bool(j.employment_type and j.employment_type == "INTERN") or bool(
-        j.title and "intern" in j.title.lower()
+        j.title and _INTERN_RE.search(j.title)
     )
-
 
 @dataclass
 class ScraperSource:
