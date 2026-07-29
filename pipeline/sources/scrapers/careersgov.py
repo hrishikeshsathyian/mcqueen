@@ -12,7 +12,7 @@ CAREERS_GOV_INDUSTRY_FIELD_CODE_IT="0017"
 
 class CareersGovScraper(BaseScraper):
     
-    def fetch(self) -> list[Job]:
+    async def afetch(self) -> list[Job]:
         fetched: list[Job] = []
         response = requests.get(CAREERS_GOV_URL)
         response.raise_for_status()
