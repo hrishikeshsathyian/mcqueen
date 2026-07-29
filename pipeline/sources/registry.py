@@ -1,9 +1,16 @@
 from pathlib import Path
 import pandas as pd
-from ats_scrapers.scrapers import TikTokScraper, SmartRecruitersScraper, LeverScraper, WorkdayScraper
+from ats_scrapers.scrapers import (
+    TikTokScraper,
+    SmartRecruitersScraper,
+    LeverScraper,
+    WorkdayScraper,
+)
 from .base import ScraperSource
 from .scrapers.careersgov import CareersGovScraper
+
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+
 
 def _load_slugs(scraper_name: str, company_url_as_slug: bool = False) -> list[str]:
     path = DATA_DIR / f"{scraper_name.lower()}.csv"
@@ -11,11 +18,12 @@ def _load_slugs(scraper_name: str, company_url_as_slug: bool = False) -> list[st
         return pd.read_csv(path)["url"].tolist()
     return pd.read_csv(path)["slug"].tolist()
 
+
 SOURCES: list[ScraperSource] = [
     ScraperSource(
         name="tiktok",
         scraper_cls=TikTokScraper,
-        slugs=["placeholder"],  
+        slugs=["placeholder"],
         max_workers=1,
     ),
     ScraperSource(
@@ -41,5 +49,5 @@ SOURCES: list[ScraperSource] = [
         scraper_cls=WorkdayScraper,
         slugs=_load_slugs("workday", True),
         max_workers=8,
-    )
+    ),
 ]
