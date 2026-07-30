@@ -10,12 +10,12 @@ JobFilter = Callable[[Job], bool]
 
 
 def default_is_singapore(j: Job) -> bool:
-    _SINGAPORE_RE = re.compile(r"\b(singapore|sg|remote|aipac)\b", re.IGNORECASE)
+    _SINGAPORE_RE = re.compile(r"\b(singapore|sg|sgp)\b", re.IGNORECASE)
     return bool(j.location and _SINGAPORE_RE.search(j.location))
 
 
 def default_is_intern(j: Job) -> bool:
-    _INTERN_RE = re.compile(r"\bintern|programme", re.IGNORECASE)
+    _INTERN_RE = re.compile(r"\bintern", re.IGNORECASE)
     return bool(j.employment_type and j.employment_type == "INTERN") or bool(
         j.title and _INTERN_RE.search(j.title)
     )
