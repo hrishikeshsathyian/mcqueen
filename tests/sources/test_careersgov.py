@@ -35,9 +35,7 @@ def test_afetch_parses_matching_internship(monkeypatch):
     def fake_get(url, *args, **kwargs):
         return _FakeResponse([FAKE_POSTING, FAKE_NON_MATCHING_POSTING])
 
-    monkeypatch.setattr(
-        "pipeline.sources.scrapers.careersgov.requests.get", fake_get
-    )
+    monkeypatch.setattr("pipeline.sources.scrapers.careersgov.requests.get", fake_get)
 
     jobs = CareersGovScraper("fake-slug").fetch()
 
@@ -47,4 +45,7 @@ def test_afetch_parses_matching_internship(monkeypatch):
     assert job.company == "Fake Agency"
     assert job.ats_id == "FAKE-001"
     assert job.employment_type == "INTERN"
-    assert str(job.apply_url) == "https://jobs.careers.gov.sg/jobs/greenhouse/12345?gh_jid=12345"
+    assert (
+        str(job.apply_url)
+        == "https://jobs.careers.gov.sg/jobs/greenhouse/12345?gh_jid=12345"
+    )

@@ -23,8 +23,10 @@ def default_is_intern(j: Job) -> bool:
         j.title and _INTERN_RE.search(j.title)
     )
 
-def default_is_tech(j: Job) -> bool: 
+
+def default_is_tech(j: Job) -> bool:
     return True
+
 
 @dataclass
 class ScraperSource:
@@ -63,7 +65,7 @@ class ScraperSource:
                 logger.info(f"[{self.name}] ({i}/{len(futures)}) {slug}")
         return raw_jobs
 
-    def _filter(self, jobs: list[Job], seen_global_ids: set[str]) -> list[Job]:
+    def _filter(self, jobs: list[Job], seen_global_ids: set[str]) -> tuple[list[Job], list[Job]]:
         filtered_jobs: list[Job] = []
         dropped_jobs_country: list[Job] = []
         dropped_jobs_role: list[Job] = []
@@ -71,13 +73,13 @@ class ScraperSource:
 
         for j in jobs:
             global_id = f"{j.ats_type}:{j.ats_id}"
-            ## check if seen before 
+            ## check if seen before
             if global_id in seen_global_ids:
                 continue
 
             if not self.is_singapore(j):
                 dropped_jobs_country.append(j)
-                continue 
+                continue
 
             if not self.is_intern(j):
                 dropped_jobs_role.append(j)
@@ -94,7 +96,7 @@ class ScraperSource:
             f"{len(dropped_jobs_role)} non-intern, "
             f"{len(dropped_jobs_non_tech)} non-tech)"
         )
-        return filtered_jobs
+        return (filtered_jobs, dropped_jobs_non_tech)
 
-    def scrape(self, seen_global_ids: set[str]) -> list[Job]:
+    def scrape(self, seen_global_ids: set[str]) -> tuple[list[Job], list[Job]]:
         return self._filter(self._fetch_raw(), seen_global_ids)

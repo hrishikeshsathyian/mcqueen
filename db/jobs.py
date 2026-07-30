@@ -9,7 +9,19 @@ from typing import cast
 logger = logging.getLogger(__name__)
 
 
-def update_seen_jobs(jobs: list[JobHiveJob]) -> None:
+def upsert_dropped_jobs(jobs: list[JobHiveJob]) -> None:
+    rows = [SeenJobCreate.from_job(job).model_dump(mode="json") for job in jobs]
+    try:
+        # ON CONFLICT (global_id) DO NOTHING
+        supabase.table("dropped_jobs_non_tech").upsert(
+            rows, on_conflict="global_id", ignore_duplicates=True
+        ).execute()
+        logger.info(f"Upserted {len(rows)} job(s) into dropped_jobs_non_tech")
+    except APIError:
+        logger.error("Error occurred trying to insert jobs to dropped_jobs_non_tech", exc_info=True)
+
+
+def upsert_seen_jobs(jobs: list[JobHiveJob]) -> None:
     rows = [SeenJobCreate.from_job(job).model_dump(mode="json") for job in jobs]
     try:
         # ON CONFLICT (global_id) DO NOTHING

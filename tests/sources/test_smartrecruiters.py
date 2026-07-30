@@ -28,9 +28,7 @@ def test_fetch_parses_one_fake_posting(httpx_mock):
 
 
 def test_fetch_returns_empty_list_for_empty_board(httpx_mock):
-    httpx_mock.add_response(
-        url=f"{FAKE_URL}?limit=100&offset=0", json={"content": []}
-    )
+    httpx_mock.add_response(url=f"{FAKE_URL}?limit=100&offset=0", json={"content": []})
 
     jobs = SmartRecruitersScraper(FAKE_SLUG, include_descriptions=False).fetch()
 
