@@ -11,12 +11,12 @@ import time
 
 async def run():
     # scrape and find unique jobs
-    filtered_jobs: list[Job] = scrape()
+    jobs: list[Job] = scrape()
     # update database
-    if len(filtered_jobs) > 0:
-        update_seen_jobs(filtered_jobs)
+    if len(jobs) > 0:
+        update_seen_jobs(jobs)
     # send new updates to telegram
-    for job in filtered_jobs:
+    for job in jobs:
         if job.ats_type == ATSType.CUSTOM:
             await bot.send_job(job=job, use_apply_url=True)
         else:

@@ -8,10 +8,7 @@ def scrape() -> list[Job]:
     jobs: list[Job] = []
 
     for source in SOURCES:
-        print(f"Fetching for source [{source.name}]")
-        raw = source.fetch_raw()
-        filtered = source.filter_new(raw, seen_global_ids)
-        print(f"[{source.name}] {len(filtered)} new matching jobs")
-        jobs.extend(filtered)
+        scraped = source.scrape(seen_global_ids=seen_global_ids)
+        jobs.extend(scraped)
 
     return jobs

@@ -20,6 +20,9 @@ def default_is_intern(j: Job) -> bool:
         j.title and _INTERN_RE.search(j.title)
     )
 
+def default_is_tech(j: Job) -> bool: 
+    return True
+
 @dataclass
 class ScraperSource:
     name: str
@@ -27,19 +30,16 @@ class ScraperSource:
     slugs: list[str]
     is_singapore: JobFilter = default_is_singapore
     is_intern: JobFilter = default_is_intern
+    is_tech: JobFilter = default_is_tech
     max_workers: int = 8
 
     def _fetch_one(self, slug: str) -> list[Job]:
-        try:
-            return self.scraper_cls(slug).fetch()
-        except ATSScrapersError as exc:
-            print(f"[{self.name}] {slug}: {type(exc).__name__}: {exc}")
-            return []
+        return self.scraper_cls(slug).fetch()
 
-    def fetch_raw(self) -> list[Job]:
+    def _fetch_raw(self) -> list[Job]:
         if len(self.slugs) == 1:
             return self._fetch_one(self.slugs[0])
-        jobs: list[Job] = []
+        raw_jobs: list[Job] = []
 
         with ThreadPoolExecutor(max_workers=self.max_workers) as pool:
             futures = {pool.submit(self._fetch_one, slug): slug for slug in self.slugs}
@@ -53,18 +53,36 @@ class ScraperSource:
                 except Exception as exc:
                     print(f"[{self.name}] unexpected error for {slug}: {exc}")
                     continue
-                jobs.extend(result)
+                raw_jobs.extend(result)
                 print(f"[{self.name}] ({i}/{len(futures)}) {slug}")
-        return jobs
+        return raw_jobs
 
-    def filter_new(self, jobs: list[Job], seen_global_ids: set[str]) -> list[Job]:
-        result: list[Job] = []
+    def _filter(self, jobs: list[Job], seen_global_ids: set[str]) -> list[Job]:
+        filtered_jobs: list[Job] = []
+        dropped_jobs_country: list[Job] = []
+        dropped_jobs_role: list[Job] = []
+        dropped_jobs_non_tech: list[Job] = []
+
         for j in jobs:
             global_id = f"{j.ats_type}:{j.ats_id}"
-            if (
-                self.is_singapore(j)
-                and self.is_intern(j)
-                and global_id not in seen_global_ids
-            ):
-                result.append(j)
-        return result
+            ## check if seen before 
+            if global_id in seen_global_ids:
+                continue
+
+            if not self.is_singapore(j):
+                dropped_jobs_country.append(j)
+                continue 
+
+            if not self.is_intern(j):
+                dropped_jobs_role.append(j)
+                continue
+
+            if not self.is_tech(j):
+                dropped_jobs_non_tech.append(j)
+
+            filtered_jobs.append(j)
+
+        return filtered_jobs
+
+    def scrape(self, seen_global_ids: set[str]) -> list[Job]:
+        return self._filter(self._fetch_raw(), seen_global_ids)
