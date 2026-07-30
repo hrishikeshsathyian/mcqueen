@@ -4,7 +4,10 @@ from dataclasses import dataclass
 from ats_scrapers.scrapers import BaseScraper
 from ats_scrapers.exceptions import ATSScrapersError
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import logging
 import re
+
+logger = logging.getLogger(__name__)
 
 JobFilter = Callable[[Job], bool]
 
@@ -48,13 +51,16 @@ class ScraperSource:
                 try:
                     result = future.result()
                 except ATSScrapersError as exc:
-                    print(f"[{self.name}] skipped {slug}: {exc}")
+                    logger.warning(f"[{self.name}] skipped {slug}: {exc}")
                     continue
                 except Exception as exc:
-                    print(f"[{self.name}] unexpected error for {slug}: {exc}")
+                    logger.error(
+                        f"[{self.name}] unexpected error for {slug}: {exc}",
+                        exc_info=True,
+                    )
                     continue
                 raw_jobs.extend(result)
-                print(f"[{self.name}] ({i}/{len(futures)}) {slug}")
+                logger.info(f"[{self.name}] ({i}/{len(futures)}) {slug}")
         return raw_jobs
 
     def _filter(self, jobs: list[Job], seen_global_ids: set[str]) -> list[Job]:
@@ -82,6 +88,12 @@ class ScraperSource:
 
             filtered_jobs.append(j)
 
+        logger.debug(
+            f"[{self.name}] filtered {len(filtered_jobs)}/{len(jobs)} job(s) "
+            f"(dropped: {len(dropped_jobs_country)} non-SG, "
+            f"{len(dropped_jobs_role)} non-intern, "
+            f"{len(dropped_jobs_non_tech)} non-tech)"
+        )
         return filtered_jobs
 
     def scrape(self, seen_global_ids: set[str]) -> list[Job]:

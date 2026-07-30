@@ -1,5 +1,6 @@
 import asyncio
 import html
+import logging
 import os
 
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
@@ -7,6 +8,8 @@ from telegram.constants import ParseMode
 from telegram.error import TelegramError, TimedOut
 
 from ats_scrapers.models import Job
+
+logger = logging.getLogger(__name__)
 
 token: str = os.environ["TELEGRAM_BOT_TOKEN"]
 chat_id: str = os.environ["TELEGRAM_CHAT_ID"]
@@ -28,7 +31,7 @@ async def send_message(
         )
 
     except TimedOut:
-        print("Telegram timeout occurred. Retrying...")
+        logger.warning("Telegram timeout occurred. Retrying...")
         await asyncio.sleep(1.0)
 
         return await bot.send_message(
@@ -40,7 +43,7 @@ async def send_message(
         )
 
     except TelegramError as e:
-        print(f"Telegram error occurred: {e}")
+        logger.error(f"Telegram error occurred: {e}", exc_info=True)
 
 
 async def send_job(job: Job, use_apply_url: bool = False):
