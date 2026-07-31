@@ -1,8 +1,11 @@
 from ats_scrapers.scrapers import BaseScraper
 from ats_scrapers.models import Job, ATSType
 from typing import Any
+import logging
 import requests
 from pydantic import HttpUrl
+
+logger = logging.getLogger(__name__)
 
 CAREERS_GOV_URL = "https://raw.githubusercontent.com/opengovsg/careersgovsg-jobs-data/main/data/job-listings.json"
 CAREERS_GOV_INTERNSHIP_EMPLOYMENT_TYPE = "Internship"
@@ -26,12 +29,12 @@ class CareersGovScraper(BaseScraper):
             == CAREERS_GOV_INTERNSHIP_EMPLOYMENT_TYPE_CODE
             and (
                 posting["fieldCode"] == CAREERS_GOV_INDUSTRY_FIELD_CODE_IT
-                or posting["fieldCode"] == CAREERS_GOV_INDUSTRY_FIELD_CODE_OTHERS
             )
         ]
         for row in filtered:
             res: Job = self.parse(row)
             fetched.append(res)
+        logger.debug(f"Fetched {len(fetched)} internship posting(s) from careers@gov")
         return fetched
 
     def parse(self, posting: Any) -> Job:
@@ -49,6 +52,7 @@ class CareersGovScraper(BaseScraper):
             experience=None,
             apply_url=HttpUrl(self._build_listing_url(posting)),
             requisition_id=None,
+            department="CAREERSGOV_TECH"
         )
 
     def _build_listing_url(self, posting: Any) -> str:

@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import html
+import logging
 import os
 
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
@@ -8,6 +9,8 @@ from telegram.constants import ParseMode
 from telegram.error import RetryAfter, TelegramError, TimedOut
 
 from ats_scrapers.models import Job
+
+logger = logging.getLogger(__name__)
 
 token: str = os.environ["TELEGRAM_BOT_TOKEN"]
 chat_id: str = os.environ["TELEGRAM_CHAT_ID"]
