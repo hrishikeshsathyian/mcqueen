@@ -26,28 +26,28 @@ SOURCES: list[ScraperSource] = [
         slugs=["placeholder"],
         max_workers=1,
     ),
-    ScraperSource(
-        name="smartrecruiters",
-        scraper_cls=SmartRecruitersScraper,
-        slugs=_load_slugs("smartrecruiters"),
-        max_workers=8,
-    ),
-    ScraperSource(
-        name="lever",
-        scraper_cls=LeverScraper,
-        slugs=_load_slugs("lever"),
-        max_workers=16,
-    ),
-    ScraperSource(
-        name="careers@gov",
-        scraper_cls=CareersGovScraper,
-        slugs=["placeholder"],
-        max_workers=1,
-    ),
-    ScraperSource(
-        name="workday",
-        scraper_cls=WorkdayScraper,
-        slugs=_load_slugs("workday", True),
-        max_workers=8,
-    ),
+    # ScraperSource(
+    #     name="smartrecruiters",
+    #     scraper_cls=SmartRecruitersScraper,
+    #     slugs=_load_slugs("smartrecruiters"),
+    #     max_workers=8,
+    # ),
+    # ScraperSource(
+    #     name="lever",
+    #     scraper_cls=LeverScraper,
+    #     slugs=_load_slugs("lever"),
+    #     max_workers=16,
+    # ),
+    # ScraperSource(
+    #     name="careers@gov",
+    #     scraper_cls=CareersGovScraper,
+    #     slugs=["placeholder"],
+    #     max_workers=1,
+    # ),
+    # ScraperSource(
+    #     name="workday",
+    #     scraper_cls=WorkdayScraper,
+    #     slugs=_load_slugs("workday", True),
+    #     max_workers=8,
+    # ),
 ]
