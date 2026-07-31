@@ -10,8 +10,7 @@ from bot import bot
 from db.jobs import upsert_seen_jobs, upsert_dropped_jobs
 from pipeline.scripts.scrape import scrape
 import asyncio
-from ats_scrapers.models import ATSType
-import time
+from ats_scrapers.models import Job, ATSType
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +32,7 @@ async def run():
             await bot.send_job(job=job, use_apply_url=True)
         else:
             await bot.send_job(job=job)
-        time.sleep(2)
+        await asyncio.sleep(3)
 
 if __name__ == "__main__":
     asyncio.run(run())
