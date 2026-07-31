@@ -53,7 +53,7 @@ async def send_job(job: Job, use_apply_url: bool = False):
         url = str(job.url)
 
     text = (
-        "🚨 <b>New Internship Alert</b>\n\n"
+        "🚨 <b>Internship Alert</b>\n\n"
         f"💼 <b>{html.escape(job.title)}</b>\n"
         f"🏢 {html.escape(job.company)}"
     )
@@ -62,7 +62,7 @@ async def send_job(job: Job, use_apply_url: bool = False):
         [
             [
                 InlineKeyboardButton(
-                    text="View Listing ↗️",
+                    text="Apply Now 🚀",
                     url=url,
                 )
             ]

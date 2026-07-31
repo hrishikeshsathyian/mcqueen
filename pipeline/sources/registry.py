@@ -36,7 +36,7 @@ SOURCES: list[ScraperSource] = [
         name="lever",
         scraper_cls=LeverScraper,
         slugs=_load_slugs("lever"),
-        max_workers=8,
+        max_workers=16,
     ),
     ScraperSource(
         name="careers@gov",
