@@ -6,7 +6,6 @@ from db.jobs import update_seen_jobs
 from pipeline.scripts.scrape import scrape
 import asyncio
 from ats_scrapers.models import Job, ATSType
-import time
 
 
 async def run():
@@ -21,7 +20,7 @@ async def run():
             await bot.send_job(job=job, use_apply_url=True)
         else:
             await bot.send_job(job=job)
-        time.sleep(2)
+        await asyncio.sleep(3)
 
 
 async def populate_db():
