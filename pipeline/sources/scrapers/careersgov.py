@@ -29,7 +29,6 @@ class CareersGovScraper(BaseScraper):
             == CAREERS_GOV_INTERNSHIP_EMPLOYMENT_TYPE_CODE
             and (
                 posting["fieldCode"] == CAREERS_GOV_INDUSTRY_FIELD_CODE_IT
-                or posting["fieldCode"] == CAREERS_GOV_INDUSTRY_FIELD_CODE_OTHERS
             )
         ]
         for row in filtered:
@@ -53,6 +52,7 @@ class CareersGovScraper(BaseScraper):
             experience=None,
             apply_url=HttpUrl(self._build_listing_url(posting)),
             requisition_id=None,
+            department="CAREERSGOV_TECH"
         )
 
     def _build_listing_url(self, posting: Any) -> str:
