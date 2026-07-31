@@ -24,7 +24,7 @@ async def send_message(
     text: str,
     reply_markup: InlineKeyboardMarkup | None = None,
 ):
-    for attempt in range(MAX_RETRIES):
+    for _ in range(MAX_RETRIES):
         try:
             return await bot.send_message(
                 chat_id=chat_id,
@@ -60,8 +60,8 @@ async def send_job(job: Job, use_apply_url: bool = False):
         url = str(job.url)
 
     text = (
-        "🚨 <b>Internship Alert</b>\n\n"
-        f"💼 <b>{html.escape(job.title)}</b>\n"
+        "🚨 <b>Internship Alert</b>\n"
+        f"💼 {html.escape(job.title)}\n"
         f"🏢 {html.escape(job.company)}"
     )
 
