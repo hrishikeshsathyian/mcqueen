@@ -10,7 +10,7 @@ from bot import bot
 from db.jobs import upsert_seen_jobs, upsert_dropped_jobs
 from pipeline.scripts.scrape import scrape
 import asyncio
-from ats_scrapers.models import Job, ATSType
+from ats_scrapers.models import ATSType
 
 logger = logging.getLogger(__name__)
 

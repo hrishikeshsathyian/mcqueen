@@ -167,7 +167,7 @@ class ScraperSource:
 
             filtered_jobs.append(j)
 
-        logger.debug(
+        logger.info(
             f"[{self.name}] filtered {len(filtered_jobs)}/{len(jobs)} job(s) "
             f"(dropped: {len(dropped_jobs_country)} non-SG, "
             f"{len(dropped_jobs_role)} non-intern, "
