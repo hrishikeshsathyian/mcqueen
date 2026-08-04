@@ -7,6 +7,9 @@ on:
   # Allows you to manually trigger the job from the Actions tab
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   scrape:
     runs-on: ubuntu-latest
@@ -28,3 +31,36 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: uv run main.py
+
+      - name: Publish seen_jobs.csv to public-data branch
+        env:
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_AUTHOR_EMAIL: github-actions[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: github-actions[bot]
+          GIT_COMMITTER_EMAIL: github-actions[bot]@users.noreply.github.com
+        run: |
+          set -euo pipefail
+
+          # Stash the freshly generated CSV outside the working tree so it
+          # survives switching branches, then move it back after checkout.
+          cp data/seen_jobs.csv /tmp/seen_jobs.csv
+          rm -f data/seen_jobs.csv
+
+          git fetch origin public-data || true
+          if git show-ref --verify --quiet refs/remotes/origin/public-data; then
+            git checkout -B public-data origin/public-data
+          else
+            git checkout --orphan public-data
+            git rm -rf . > /dev/null
+          fi
+
+          mkdir -p data
+          cp /tmp/seen_jobs.csv data/seen_jobs.csv
+
+          git add data/seen_jobs.csv
+          if ! git diff --cached --quiet; then
+            git commit -m "Update seen jobs CSV export"
+            git push origin public-data
+          else
+            echo "No changes to seen_jobs.csv, skipping push"
+          fi

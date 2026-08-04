@@ -41,3 +41,14 @@ def get_seen_global_ids() -> set[str]:
         ids.add(row["global_id"])
     logger.debug(f"Retrieved {len(ids)} seen global id(s)")
     return ids
+
+
+def get_seen_jobs_csv_rows() -> list[dict[str, str]]:
+    response = (
+        supabase.table("seen_jobs")
+        .select("global_id,title,company,apply_url,url,fetched_at")
+        .execute()
+    )
+    rows = cast(list[dict[str, str]], response.data)
+    logger.debug(f"Retrieved {len(rows)} seen job row(s) for CSV export")
+    return rows

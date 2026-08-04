@@ -4,6 +4,7 @@ import logging
 from bot import bot
 from db.jobs import upsert_seen_jobs, upsert_dropped_jobs
 from pipeline.scripts.scrape import scrape
+from pipeline.scripts.export_csv import export_seen_jobs_csv
 import asyncio
 from ats_scrapers.models import ATSType
 
@@ -21,7 +22,10 @@ async def run():
         upsert_seen_jobs(jobs)
 
     if len(dropped) > 0:
-        upsert_dropped_jobs(dropped) 
+        upsert_dropped_jobs(dropped)
+
+    # keep the CSV export of seen_jobs up to date on every run
+    export_seen_jobs_csv()
 
     # # send new updates to telegram
     # for job in jobs:
