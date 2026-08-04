@@ -44,9 +44,11 @@ def get_seen_global_ids() -> set[str]:
 
 
 def get_seen_jobs_csv_rows() -> list[dict[str, str]]:
-    # Backed by the `export_seen_jobs_csv` function defined in db/migrations,
-    # which coalesces apply_url/url into a single `url` column.
-    response = supabase.rpc("export_seen_jobs_csv").execute()
+    response = (
+        supabase.table("seen_jobs")
+        .select("global_id,title,company,apply_url,url,fetched_at")
+        .execute()
+    )
     rows = cast(list[dict[str, str]], response.data)
     logger.debug(f"Retrieved {len(rows)} seen job row(s) for CSV export")
     return rows
