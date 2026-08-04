@@ -26,8 +26,8 @@ class SeenJobCreate(BaseModel):
         return cls(
             ats_type=job.ats_type.value,
             ats_id=job.ats_id,
-            apply_url=str(job.apply_url),
-            url=str(job.url),
+            apply_url=str(job.apply_url) if job.apply_url else None,
+            url=str(job.url) if job.url else None,
             company=job.company,
             title=job.title,
             location=job.location,

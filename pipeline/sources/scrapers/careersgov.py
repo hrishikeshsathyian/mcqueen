@@ -59,10 +59,13 @@ class CareersGovScraper(BaseScraper):
         platform = posting.get("platform", "").lower()
         job_id = posting.get("jobId", "")
         posting_no = posting.get("postingNo", "")
+        
         if platform == "workable":
             return f"https://apply.workable.com/j/{posting_no}"
+
         if platform == "greenhouse":
             return (
                 f"https://jobs.careers.gov.sg/jobs/{platform}/{job_id}?gh_jid={job_id}"
             )
+
         return f"https://jobs.careers.gov.sg/jobs/{platform}/{job_id}/{posting_no}"  # for hrp

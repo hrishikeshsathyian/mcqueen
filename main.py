@@ -1,10 +1,5 @@
 from dotenv import load_dotenv
-
-load_dotenv()
-from logging_config import setup_logging
-
-setup_logging()
-
+from config.logging import setup_logging
 import logging
 from bot import bot
 from db.jobs import upsert_seen_jobs, upsert_dropped_jobs
@@ -14,6 +9,8 @@ from ats_scrapers.models import ATSType
 
 logger = logging.getLogger(__name__)
 
+setup_logging()
+load_dotenv()
 
 async def run():
     jobs, dropped = scrape()
@@ -26,13 +23,13 @@ async def run():
     if len(dropped) > 0:
         upsert_dropped_jobs(dropped) 
 
-    # send new updates to telegram
-    for job in jobs:
-        if job.ats_type == ATSType.CUSTOM:
-            await bot.send_job(job=job, use_apply_url=True)
-        else:
-            await bot.send_job(job=job)
-        await asyncio.sleep(3)
+    # # send new updates to telegram
+    # for job in jobs:
+    #     if job.ats_type == ATSType.CUSTOM:
+    #         await bot.send_job(job=job, use_apply_url=True)
+    #     else:
+    #         await bot.send_job(job=job)
+    #     await asyncio.sleep(3)
 
 if __name__ == "__main__":
     asyncio.run(run())
